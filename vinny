@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Movie Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🎬 My Movie Hub</h1>
+    <input type="text" id="search" placeholder="Search movies...">
+  </header>
+
+  <main id="movie-list">
+    <!-- Movies will appear here -->
+  </main>
+
+  <script src="script.js"></script>
+</body>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  margin: 0;
+}
+
+header {
+  background: #222;
+  padding: 15px;
+  text-align: center;
+}
+
+input {
+  padding: 10px;
+  width: 60%;
+  margin-top: 10px;
+}
+
+#movie-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.movie {
+  background: #333;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.movie img {
+  width: 100%;
+  border-radius: 10px;
+}const API_KEY = "YOUR_API_KEY_HERE";
+const BASE_URL = "https://api.themoviedb.org/3";
+const IMG_URL = "https://image.tmdb.org/t/p/w500";
+
+const container = document.getElementById("movie-list");
+
+// Fetch trending movies
+async function getMovies() {
+  const res = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}`);
+  const data = await res.json();
+  displayMovies(data.results);
+}
+
+function displayMovies(movies) {
+  container.innerHTML = "";
+
+  movies.forEach(movie => {
+    const title = movie.title || movie.name;
+    const poster = movie.poster_path 
+      ? IMG_URL + movie.poster_path 
+      : "https://via.placeholder.com/200x300";
+
+    const div = document.createElement("div");
+    div.classList.add("movie");
+
+    div.innerHTML = `
+      <img src="${poster}">
+      <h3>${title}</h3>
+      <p>⭐ ${movie.vote_average}</p>
+      <button onclick="viewDetails(${movie.id})">View</button>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+// Show details (you can expand this later)
+function viewDetails(id) {
+  alert("Movie ID: " + id);
+}
+
+getMovies();
